@@ -1,18 +1,17 @@
 package config
 
 import (
-	"time"
 	"github.com/kelseyhightower/envconfig"
+	"time"
 )
 
 // Config represents service configuration for dp-bulletin-api
 type Config struct {
-	BindAddr             	    string          `envconfig:"BIND_ADDR"`
-	GracefulShutdownTimeout     time.Duration   `envconfig:"GRACEFUL_SHUTDOWN_TIMEOUT"`
-	HealthCheckInterval         time.Duration   `envconfig:"HEALTHCHECK_INTERVAL"`
-    HealthCheckCriticalTimeout  time.Duration   `envconfig:"HEALTHCHECK_CRITICAL_TIMEOUT"`
-	Emphasise                   bool            `envconfig:"EMPHASISE"`
-
+	BindAddr                   string        `envconfig:"BIND_ADDR"`
+	GracefulShutdownTimeout    time.Duration `envconfig:"GRACEFUL_SHUTDOWN_TIMEOUT"`
+	HealthCheckInterval        time.Duration `envconfig:"HEALTHCHECK_INTERVAL"`
+	HealthCheckCriticalTimeout time.Duration `envconfig:"HEALTHCHECK_CRITICAL_TIMEOUT"`
+	Emphasise                  bool          `envconfig:"EMPHASISE"`
 }
 
 var cfg *Config
@@ -28,10 +27,8 @@ func Get() (*Config, error) {
 		BindAddr:                   ":24200",
 		GracefulShutdownTimeout:    5 * time.Second,
 		HealthCheckInterval:        10 * time.Second,
-        HealthCheckCriticalTimeout: time.Minute,
+		HealthCheckCriticalTimeout: time.Minute,
 		Emphasise:                  true,
-
-
 	}
 
 	return cfg, envconfig.Process("", cfg)
