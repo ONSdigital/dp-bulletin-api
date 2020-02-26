@@ -11,7 +11,6 @@ type Config struct {
 	GracefulShutdownTimeout    time.Duration `envconfig:"GRACEFUL_SHUTDOWN_TIMEOUT"`
 	HealthCheckInterval        time.Duration `envconfig:"HEALTHCHECK_INTERVAL"`
 	HealthCheckCriticalTimeout time.Duration `envconfig:"HEALTHCHECK_CRITICAL_TIMEOUT"`
-	Emphasise                  bool          `envconfig:"EMPHASISE"`
 }
 
 var cfg *Config
@@ -28,7 +27,6 @@ func Get() (*Config, error) {
 		GracefulShutdownTimeout:    5 * time.Second,
 		HealthCheckInterval:        10 * time.Second,
 		HealthCheckCriticalTimeout: time.Minute,
-		Emphasise:                  true,
 	}
 
 	return cfg, envconfig.Process("", cfg)
