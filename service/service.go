@@ -14,7 +14,7 @@ import (
 	"time"
 )
 
-const serviceName = "dp_bulletin_api"
+const serviceName = "dp-bulletin-api"
 
 // run the application
 func Run(buildTime, gitCommit, version string, args []string) error {
