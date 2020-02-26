@@ -1,5 +1,5 @@
 #!/bin/bash -eux
 
-pushd {.Name}
+pushd dp-bulletin-api
   make test
 popd

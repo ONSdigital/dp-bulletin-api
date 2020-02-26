@@ -16,9 +16,8 @@ var (
 )
 
 func main() {
-	if err := service.Run(BuildTime,GitCommit,Version, os.Args); err != nil {
+	if err := service.Run(BuildTime, GitCommit, Version, os.Args); err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
 }
-

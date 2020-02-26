@@ -8,22 +8,24 @@ import (
 	"github.com/ONSdigital/go-ns/server"
 	"github.com/ONSdigital/log.go/log"
 	"github.com/gorilla/mux"
+	"github.com/pkg/errors"
 	"os"
 	"os/signal"
 	"time"
 )
 
+const serviceName = "dp_bulletin_api"
+
 // run the application
-func Run(buildTime,gitCommit,version string, args []string) error {
-	log.Namespace = "dp_bulletin_api"
+func Run(buildTime, gitCommit, version string, args []string) error {
+	log.Namespace = serviceName
 	cfg, err := config.Get()
 	ctx := context.Background()
 	if err != nil {
-		log.Event(ctx, "unable to retrieve service configuration", log.Error(err))
-		return err
+		return errors.Wrap(err, "unable to retrieve service configuration")
 	}
 
-	log.Event(ctx, "got service configuration", log.Data{"config": cfg})
+	log.Event(ctx, "got service configuration", log.Data{"config": cfg}, log.INFO)
 
 	versionInfo, err := healthcheck.NewVersionInfo(
 		buildTime,
@@ -45,11 +47,11 @@ func Run(buildTime,gitCommit,version string, args []string) error {
 	s := server.New(cfg.BindAddr, r)
 	s.HandleOSSignals = false
 
-	log.Event(ctx, "Starting server", log.Data{"config": cfg})
+	log.Event(ctx, "Starting server", log.Data{"config": cfg}, log.INFO)
 
 	go func() {
 		if err := s.ListenAndServe(); err != nil {
-			log.Event(ctx, "failed to start http listen and serve", log.Error(err))
+			log.Event(ctx, "failed to start http listen and serve", log.Error(err), log.ERROR)
 			return
 		}
 	}()
@@ -60,13 +62,13 @@ func Run(buildTime,gitCommit,version string, args []string) error {
 	<-stop
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	log.Event(ctx, "shutting service down gracefully")
+	log.Event(ctx, "shutting service down gracefully", log.INFO)
 	defer cancel()
 	if err := s.Server.Shutdown(ctx); err != nil {
-		log.Event(ctx, "failed to shutdown http server", log.Error(err))
+		log.Event(ctx, "failed to shutdown http server", log.Error(err), log.ERROR)
 	}
 	if err := a.Close(ctx); err != nil {
-		log.Event(ctx, "failed to shutdown api", log.Error(err))
+		log.Event(ctx, "failed to shutdown api", log.Error(err), log.ERROR)
 	}
 	return nil
 }
