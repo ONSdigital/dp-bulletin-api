@@ -9,68 +9,81 @@ import (
 	"github.com/ONSdigital/log.go/log"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
-	"os"
-	"os/signal"
-	"time"
 )
 
-const serviceName = "dp-bulletin-api"
+type Service struct {
+	Config      *config.Config
+	Server      *server.Server
+	Router      *mux.Router
+	API         *api.API
+	HealthCheck *healthcheck.HealthCheck
+}
 
-// run the application
-func Run(buildTime, gitCommit, version string, args []string) error {
-	log.Namespace = serviceName
-	cfg, err := config.Get()
+// Run the service
+func Run(buildTime, gitCommit, version string, svcErrors chan error) (*Service, error) {
 	ctx := context.Background()
-	if err != nil {
-		return errors.Wrap(err, "unable to retrieve service configuration")
-	}
+	log.Event(ctx, "running service", log.INFO)
 
+	cfg, err := config.Get()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to retrieve service configuration")
+	}
 	log.Event(ctx, "got service configuration", log.Data{"config": cfg}, log.INFO)
+
+	r := mux.NewRouter()
+
+	s := server.New(cfg.BindAddr, r)
+	s.HandleOSSignals = false
+
+	a := api.Init(ctx, r, cfg)
 
 	versionInfo, err := healthcheck.NewVersionInfo(
 		buildTime,
 		gitCommit,
 		version,
 	)
-
-	r := mux.NewRouter()
-
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to parse version information")
+	}
 	hc := healthcheck.New(versionInfo, cfg.HealthCheckCriticalTimeout, cfg.HealthCheckInterval)
-	if err = registerCheckers(ctx, &hc); err != nil {
-		return err
+	if err := registerCheckers(ctx, &hc); err != nil {
+		return nil, errors.Wrap(err, "unable to register checkers")
 	}
 	r.StrictSlash(true).Path("/health").HandlerFunc(hc.Handler)
-	a := api.Init(ctx, r, cfg)
-
 	hc.Start(ctx)
-
-	s := server.New(cfg.BindAddr, r)
-	s.HandleOSSignals = false
-
-	log.Event(ctx, "Starting server", log.Data{"config": cfg}, log.INFO)
 
 	go func() {
 		if err := s.ListenAndServe(); err != nil {
-			log.Event(ctx, "failed to start http listen and serve", log.Error(err), log.ERROR)
-			return
+			svcErrors <- errors.Wrap(err, "failure in  http listen and serve")
 		}
 	}()
 
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt, os.Kill)
+	return &Service{
+		Config:      cfg,
+		Router:      r,
+		API:         a,
+		HealthCheck: &hc,
+		Server:      s,
+	}, nil
+}
 
-	<-stop
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	log.Event(ctx, "shutting service down gracefully", log.INFO)
+// Gracefully shutdown the service
+func (svc *Service) Close() {
+	timeout := svc.Config.GracefulShutdownTimeout
+	log.Event(nil, "commencing graceful shutdown", log.Data{"graceful_shutdown_timeout": timeout}, log.INFO)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
-	if err := s.Server.Shutdown(ctx); err != nil {
+
+	// stop any incoming requests before closing any outbound connections
+	if err := svc.Server.Shutdown(ctx); err != nil {
 		log.Event(ctx, "failed to shutdown http server", log.Error(err), log.ERROR)
 	}
-	if err := a.Close(ctx); err != nil {
-		log.Event(ctx, "failed to shutdown api", log.Error(err), log.ERROR)
+
+	if err := svc.API.Close(ctx); err != nil {
+		log.Event(ctx, "error closing API", log.Error(err), log.ERROR)
 	}
-	return nil
+
+	log.Event(nil, "graceful shutdown complete", log.INFO)
 }
 
 func registerCheckers(ctx context.Context, hc *healthcheck.HealthCheck) (err error) {
