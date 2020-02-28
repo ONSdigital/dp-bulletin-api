@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/ONSdigital/dp-bulletin-api/service"
 	"github.com/ONSdigital/log.go/log"
+	"github.com/pkg/errors"
 	"os"
 	"os/signal"
 )
@@ -21,23 +22,29 @@ var (
 func main() {
 	log.Namespace = serviceName
 
+	if err := run(); err != nil {
+		log.Event(nil, "fatal runtime error", log.Error(err), log.FATAL)
+		os.Exit(1)
+	}
+}
+
+func run() error {
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt, os.Kill)
 
 	svcErrors := make(chan error, 1)
 	svc, err := service.Run(BuildTime, GitCommit, Version, svcErrors)
 	if err != nil {
-		log.Event(nil, "running service failed", log.Error(err), log.FATAL)
-		os.Exit(1)
+		return errors.Wrap(err, "running service failed")
 	}
 
 	// blocks until an os interrupt or a fatal error occurs
 	select {
 	case err := <-svcErrors:
-		log.Event(nil, "service error received", log.Error(err), log.FATAL)
-		os.Exit(1)
+		return errors.Wrap(err, "service error received")
 	case sig := <-signals:
 		log.Event(nil, "os signal received", log.Data{"signal": sig}, log.INFO)
 		svc.Close()
 	}
+	return nil
 }
