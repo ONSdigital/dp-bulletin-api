@@ -26,7 +26,7 @@ job "dp-bulletin-api" {
       mode     = "delay"
     }
 
-    task "dp-bulletin-api" {
+    task "dp-bulletin-ap-web" {
       driver = "docker"
 
       artifact {
@@ -113,7 +113,7 @@ job "dp-bulletin-api" {
       }
 
       service {
-        name = dp-bulletin-api
+        name = "dp-bulletin-api"
         port = "http"
         tags = ["publishing"]
 
