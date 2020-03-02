@@ -40,9 +40,6 @@ job "dp-bulletin-api" {
 
         image = "{{ECR_URL}}:concourse-{{REVISION}}"
 
-        port_map {
-          http = 8080
-        }
       }
 
       service {
@@ -107,9 +104,6 @@ job "dp-bulletin-api" {
 
         image = "{{ECR_URL}}:concourse-{{REVISION}}"
 
-        port_map {
-          http = 24200
-        }
       }
 
       service {
