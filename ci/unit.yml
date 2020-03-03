@@ -11,7 +11,7 @@ image_resource:
 inputs:
   - name: dp-bulletin-api
 
-  caches:
+caches:
   - path: go/
 
 run:
