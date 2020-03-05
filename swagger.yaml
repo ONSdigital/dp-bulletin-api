@@ -10,27 +10,243 @@ basePath: "/v1"
 schemes:
   - http
 tags:
-  - name: "hello"
+  - name: "Public"
 paths:
-  /hello:
+  /bulletins:
     get:
       tags:
-        - hello
-      summary: Example hello world endpoint
-      description: Returns an example payload.
+        - "Public"
+      summary: Get a list of buletins
+      description: (future implementation)
+      parameters:
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/offset'
+      produces:
+        - application/json
+      responses:
+        501:
+          description: Not Implemented
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/BulletinsList"
+
+  /bulletins/{id}:
+    get:
+      tags:
+        - "Public"
+      summary: Get a bulletin
+      parameters:
+        - $ref: '#/parameters/id'
       produces:
         - application/json
       responses:
         200:
           description: OK
           schema:
-            $ref: "#/definitions/HelloResponse"
+            $ref: "#/definitions/Bulletin"
+
+  /bulletins/{id}/editions:
+    get:
+      tags:
+        - "Public"
+      summary: Get a list of editions of a bulletin
+      parameters:
+        - $ref: '#/parameters/id'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/offset'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/EditionsList"
+
+  /bulletins/{id}/editions/{edition}:
+    get:
+      tags:
+        - "Public"
+      summary: Get an edition of a bulletin
+      parameters:
+        - $ref: '#/parameters/id'
+        - $ref: '#/parameters/edition'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Edition"
+
+  /bulletins/{id}/editions/{edition}/versions:
+    get:
+      tags:
+        - "Public"
+      summary: Get a list of versions of an edition
+      parameters:
+        - $ref: '#/parameters/id'
+        - $ref: '#/parameters/edition'
+        - $ref: '#/parameters/limit'
+        - $ref: '#/parameters/offset'
+      description: (future implementation)
+      produces:
+        - application/json
+      responses:
+        501:
+          description: Not Implemented
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/VersionsList"
+
+  /bulletins/{id}/editions/{edition}/versions/{version}:
+    get:
+      tags:
+        - "Public"
+      summary: Get a version
+      parameters:
+        - $ref: '#/parameters/id'
+        - $ref: '#/parameters/edition'
+        - $ref: '#/parameters/version'
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Version"
+
+parameters:
+  id:
+    name: id
+    description: "ID of a bulletin"
+    type: string
+    in: path
+    required: true
+  edition:
+    name: id
+    description: "Edition of a bulletin"
+    type: string
+    in: path
+    required: true
+  version:
+    name: id
+    description: "Version of a bulletin"
+    type: string
+    in: path
+    required: true
+  limit:
+    name: limit
+    description: "The number of items requested, defaulted to 50 and limited to 1000."
+    type: integer
+    required: false
+    in: query
+  offset:
+    name: offset
+    description: "The first row of resources to retrieve, starting at 0. Use this parameter as a pagination mechanism along with the limit parameter."
+    type: integer
+    required: false
+    in: query
 
 definitions:
-  HelloResponse:
+  BulletinsList:
     type: object
     properties:
-      message:
+      count:
+        $ref: "#/definitions/itemCount"
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/BulletinsListItem'
+
+  BulletinsListItem:
+    type: object
+    properties:
+      id:
+        $ref: "#/definitions/id"
+
+  Bulletin:
+    type: object
+    properties:
+      id:
+        $ref: "#/definitions/id"
+
+  EditionsList:
+    type: object
+    properties:
+      id:
+        $ref: "#/definitions/id"
+      count:
+        $ref: "#/definitions/itemCount"
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/EditionsListItem'
+
+  EditionsListItem:
+    type: object
+    properties:
+      edition:
+        $ref: "#/definitions/edition"
+
+
+  Edition:
+    type: object
+    properties:
+      id:
+        $ref: "#/definitions/id"
+      edition:
+        $ref: "#/definitions/edition"
+
+
+  VersionsList:
+    type: object
+    properties:
+      id:
+        $ref: "#/definitions/id"
+      edition:
+        $ref: "#/definitions/edition"
+      count:
+        $ref: "#/definitions/itemCount"
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/VersionsListItem'
+
+  VersionsListItem:
+    type: object
+    properties:
+      version:
         type: string
-        description: "Message returned by hello world endpoint"
-        example: "Hello, world!"
+        description: "Version number"
+        example: 1
+
+
+  Version:
+    type: object
+    properties:
+      id:
+        $ref: "#/definitions/id"
+      edition:
+        $ref: "#/definitions/edition"
+      version:
+        $ref: "#/definitions/version"
+
+
+  id:
+    type: string
+    description: "id of the bulletin"
+    example: "uklabourmarket"
+  edition:
+    type: string
+    description: "edition of the bulletin"
+    example: "November 2019"
+  version:
+    type: string
+    description: Particular version
+    example: "1"
+  itemCount:
+    type: integer
+    description: "count of items returned in list"
+    example: 25
