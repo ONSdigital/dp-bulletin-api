@@ -26,11 +26,11 @@ job "dp-bulletin-api" {
       mode     = "delay"
     }
 
-    task "dp-bulletin-ap-web" {
+    task "dp-bulletin-api-web" {
       driver = "docker"
 
       artifact {
-        source = "s3::https://s3-eu-west-1.amazonaws.com/{{DEPLOYMENT_BUCKET}}/dp-bulletin-api/{{REVISION}}.tar.gz"
+        source = "s3::https://s3-eu-west-1.amazonaws.com/{{DEPLOYMENT_BUCKET}}/dp-bulletin-api/{{PROFILE}}/{{RELEASE}}.tar.gz"
       }
 
       config {

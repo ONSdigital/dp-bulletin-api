@@ -35,7 +35,7 @@ func Run(buildTime, gitCommit, version string, svcErrors chan error) (*Service, 
 	s := server.New(cfg.BindAddr, r)
 	s.HandleOSSignals = false
 
-	a := api.Init(ctx, r, cfg)
+	a := api.Init(ctx, r)
 
 	versionInfo, err := healthcheck.NewVersionInfo(
 		buildTime,
