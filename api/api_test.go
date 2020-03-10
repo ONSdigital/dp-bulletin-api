@@ -13,7 +13,7 @@ func TestInit(t *testing.T) {
 	Convey("Given an API instance", t, func() {
 		r := mux.NewRouter()
 		ctx := context.Background()
-		api := Init(ctx, r, nil)
+		api := Init(ctx, r)
 
 		Convey("When created the following routes should have been added", func() {
 			// Replace the check below with any newly added api endpoints
@@ -26,7 +26,7 @@ func TestClose(t *testing.T) {
 	Convey("Given an API instance", t, func() {
 		r := mux.NewRouter()
 		ctx := context.Background()
-		a := Init(ctx, r, nil)
+		a := Init(ctx, r)
 
 		Convey("When the api is closed any dependencies are closed also", func() {
 			err := a.Close(ctx)

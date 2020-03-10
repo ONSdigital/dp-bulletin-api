@@ -7,7 +7,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestSpec(t *testing.T) {
+func TestConfig(t *testing.T) {
 	Convey("Given an environment with no environment variables set", t, func() {
 		cfg, err := Get()
 

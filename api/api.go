@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"github.com/ONSdigital/dp-bulletin-api/config"
 	"github.com/ONSdigital/log.go/log"
 	"github.com/gorilla/mux"
 )
@@ -12,7 +11,7 @@ type API struct {
 	Router *mux.Router
 }
 
-func Init(ctx context.Context, r *mux.Router, cfg *config.Config) *API {
+func Init(ctx context.Context, r *mux.Router) *API {
 	api := &API{
 		Router: r,
 	}
