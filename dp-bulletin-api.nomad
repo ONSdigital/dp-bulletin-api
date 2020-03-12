@@ -94,7 +94,7 @@ job "dp-bulletin-api" {
       driver = "docker"
 
       artifact {
-        source = "s3::https://s3-eu-west-1.amazonaws.com/{{DEPLOYMENT_BUCKET}}/dp-bulletin-api/{{REVISION}}.tar.gz"
+        source = "s3::https://s3-eu-west-1.amazonaws.com/{{DEPLOYMENT_BUCKET}}/dp-bulletin-api/{{PROFILE}}/{{RELEASE}}.tar.gz"
       }
 
       config {
@@ -103,7 +103,6 @@ job "dp-bulletin-api" {
         args = ["./dp-bulletin-api"]
 
         image = "{{ECR_URL}}:concourse-{{REVISION}}"
-
       }
 
       service {
