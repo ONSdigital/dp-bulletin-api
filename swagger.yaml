@@ -171,12 +171,25 @@ definitions:
     properties:
       id:
         $ref: '#/definitions/id'
-      contact:
+      contacts:
+        type: array
+        items:
         $ref: '#/definitions/Contact'
+      description:
+        $ref: '#/definitions/summary'
+      keywords:
+        type: array
+        description: List of keywords relating to this bulletin
+        items:
+          type: string
+        example: [ "work" , "jobless" ]
+      license:
+        description: "The standard Government license right text for the bulletin"
+        type: string
       national_statistic:
         $ref: '#/definitions/nationalStatistic'
-      summary:
-        $ref: '#/definitions/summary'
+      next_release:
+        $ref: '#/definitions/nextRelease'
       title:
         $ref: '#/definitions/title'
 
@@ -206,8 +219,6 @@ definitions:
         $ref: '#/definitions/id'
       edition:
         $ref: '#/definitions/edition'
-      next_release:
-        $ref: '#/definitions/nextRelease'
       latest_version:
         $ref: '#/definitions/versionRef'
 
@@ -264,7 +275,7 @@ definitions:
           $ref: '#/definitions/FigureSection'
       headlines:
         type: array
-        description: Headlines from this buletin
+        description: Headlines from this bulletin
         maxItems: 3
         items:
           type: string
@@ -273,12 +284,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/FigureSection'
-      keywords:
-        type: array
-        description: List of keywords relating to this bulletin
-        items:
-          type: string
-        example: [ "work" , "jobless" ]
       links:
         type: array
         items:
@@ -326,8 +331,6 @@ definitions:
       name:
         type: string
         example: "Joe Bloggs"
-      organisation:
-        type: string
       telephone:
         type: string
         example: "+44 (0)845 601 3034"
@@ -393,7 +396,7 @@ definitions:
 
   nationalStatistic:
     type: boolean
-    description: Indicates that this bulletin refers to a National Statistic
+    description: Indicates that this bulletin refers to a National Statistic. These are certified as compliant with the Code of Practice for Official Statistics.
     example: true
   nextRelease:
     type: string
