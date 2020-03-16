@@ -174,7 +174,7 @@ definitions:
       contacts:
         type: array
         items:
-        $ref: '#/definitions/Contact'
+          $ref: '#/definitions/Contact'
       description:
         $ref: '#/definitions/summary'
       keywords:
@@ -192,6 +192,17 @@ definitions:
         $ref: '#/definitions/nextRelease'
       title:
         $ref: '#/definitions/title'
+      links:
+        type: object
+        properties:
+          self:
+            $ref: '#/definitions/Link'
+          latest_edition:
+            $ref: '#/definitions/Link'
+          versions:
+            $ref: '#/definitions/Link'
+          latest_version:
+            $ref: '#/definitions/Link'
 
   EditionsList:
     type: object
@@ -219,8 +230,17 @@ definitions:
         $ref: '#/definitions/id'
       edition:
         $ref: '#/definitions/edition'
-      latest_version:
-        $ref: '#/definitions/versionRef'
+      links:
+        type: object
+        properties:
+          self:
+            $ref: '#/definitions/Link'
+          bulletin:
+            $ref: '#/definitions/Link'
+          versions:
+            $ref: '#/definitions/Link'
+          latest_version:
+            $ref: '#/definitions/Link'
 
 
   VersionsList:
@@ -284,29 +304,29 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/FigureSection'
-      links:
+      bulletin_links:
         type: array
         items:
-          $ref: '#/definitions/Link'
+          $ref: '#/definitions/BulletinLink'
       meta_description:
         type: string
         example: "Estimates of employment… statistics for the UK."
       related_data:
         type: array
         items:
-          $ref: '#/definitions/Link'
+          $ref: '#/definitions/BulletinLink'
       related_documents:
         type: array
         items:
-          $ref: '#/definitions/Link'
+          $ref: '#/definitions/BulletinLink'
       related_methodologies:
         type: array
         items:
-          $ref: '#/definitions/Link'
+          $ref: '#/definitions/BulletinLink'
       related_methodology_articles:
         type: array
         items:
-          $ref: '#/definitions/Link'
+          $ref: '#/definitions/BulletinLink'
       sections:
         type: array
         items:
@@ -320,7 +340,16 @@ definitions:
       topics:
         type: array
         items:
-          $ref: '#/definitions/Link'
+          $ref: '#/definitions/BulletinLink'
+      links:
+        type: object
+        properties:
+          self:
+            $ref: '#/definitions/Link'
+          bulletin:
+            $ref: '#/definitions/Link'
+          versions:
+            $ref: '#/definitions/Link'
 
   Contact:
     type: object
@@ -367,7 +396,7 @@ definitions:
         description: Version
         example: "2"
 
-  Link:
+  BulletinLink:
     type: object
     properties:
       index:
@@ -376,6 +405,17 @@ definitions:
         type: string
       uri:
         type: string
+
+  Link:
+    type: object
+    properties:
+      href:
+        type: string
+        format: uri
+      id:
+        type: string
+    required:
+      - href
 
   id:
     type: string
@@ -410,7 +450,3 @@ definitions:
     type: string
     description: The title of the bulletin
     example: "Labour market overview, UK"
-  versionRef:
-    type: string
-    format: uri
-    example: "/v1/bulletins/uklabourmarket/editions/November%202019/versions/1"
