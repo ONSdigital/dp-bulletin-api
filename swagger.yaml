@@ -158,13 +158,7 @@ definitions:
       items:
         type: array
         items:
-          $ref: '#/definitions/BulletinsListItem'
-
-  BulletinsListItem:
-    type: object
-    properties:
-      id:
-        $ref: '#/definitions/id'
+          $ref: '#/definitions/Bulletin'
 
   Bulletin:
     type: object
@@ -197,6 +191,8 @@ definitions:
         properties:
           self:
             $ref: '#/definitions/Link'
+          editions:
+            $ref: '#/definitions/Link'
           latest_edition:
             $ref: '#/definitions/Link'
           versions:
@@ -214,14 +210,7 @@ definitions:
       items:
         type: array
         items:
-          $ref: '#/definitions/EditionsListItem'
-
-  EditionsListItem:
-    type: object
-    properties:
-      edition:
-        $ref: '#/definitions/edition'
-
+          $ref: '#/definitions/Edition'
 
   Edition:
     type: object
@@ -255,26 +244,7 @@ definitions:
       items:
         type: array
         items:
-          $ref: '#/definitions/VersionsListItem'
-
-  VersionsListItem:
-    type: object
-    properties:
-      version:
-        type: string
-        description: Version number
-        example: "2"
-      correction_notice:
-        type: string
-        example: "A correction has been ma…gise for any inconvenience."
-      update_date:
-        type: string
-        format: 'date-time'
-        example: "2019-11-12T15:53:59.810Z"
-      uri:
-        type: string
-        example: "/employmentandlabourmarket/peopl…er2019/previous/v2"
-
+          $ref: '#/definitions/Version'
 
   Version:
     type: object
@@ -285,10 +255,17 @@ definitions:
         $ref: '#/definitions/edition'
       version:
         $ref: '#/definitions/version'
+      alerts:
+        type: array
+        items:
+          $ref: '#/definitions/Alert'
       charts:
         type: array
         items:
           $ref: '#/definitions/FigureSection'
+      correction_notice:
+        type: string
+        example: "A correction has been ma…gise for any inconvenience."
       equations:
         type: array
         items:
@@ -341,6 +318,10 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/BulletinLink'
+      update_date:
+        type: string
+        format: 'date-time'
+        example: "2019-11-12T15:53:59.810Z"
       links:
         type: object
         properties:
@@ -350,6 +331,21 @@ definitions:
             $ref: '#/definitions/Link'
           versions:
             $ref: '#/definitions/Link'
+
+  Alert:
+    type: object
+    properties:
+      date:
+        type: string
+        format: 'date-time'
+        example: "2019-09-29T23:00:00.000Z"
+      description:
+        type: string
+        description: Markdown formatted description of the alert
+        example: "The Business investment by industry and ...for the inconvenience"
+      type:
+        type: string
+        example: "alert"
 
   Contact:
     type: object
