@@ -184,6 +184,30 @@ definitions:
         $ref: '#/definitions/nationalStatistic'
       next_release:
         $ref: '#/definitions/nextRelease'
+      related_links:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedLink'
+      related_data:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedLink'
+      related_documents:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedLink'
+      related_methodologies:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedLink'
+      related_methodology_articles:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedLink'
+      related_topics:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedLink'
       title:
         $ref: '#/definitions/title'
       links:
@@ -266,6 +290,8 @@ definitions:
       correction_notice:
         type: string
         example: "A correction has been ma…gise for any inconvenience."
+      downloads:
+        $ref: '#/definitions/Downloads'
       equations:
         type: array
         items:
@@ -281,29 +307,9 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/FigureSection'
-      bulletin_links:
-        type: array
-        items:
-          $ref: '#/definitions/BulletinLink'
       meta_description:
         type: string
         example: "Estimates of employment… statistics for the UK."
-      related_data:
-        type: array
-        items:
-          $ref: '#/definitions/BulletinLink'
-      related_documents:
-        type: array
-        items:
-          $ref: '#/definitions/BulletinLink'
-      related_methodologies:
-        type: array
-        items:
-          $ref: '#/definitions/BulletinLink'
-      related_methodology_articles:
-        type: array
-        items:
-          $ref: '#/definitions/BulletinLink'
       sections:
         type: array
         items:
@@ -314,10 +320,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/FigureSection'
-      topics:
-        type: array
-        items:
-          $ref: '#/definitions/BulletinLink'
       update_date:
         type: string
         format: 'date-time'
@@ -371,6 +373,26 @@ definitions:
         type: string
         description: Markdown formatted content for the section
         example: "Some _content_ in [Markdown](https://en.wikipedia.org/wiki/Markdown)"
+      collapse:
+        type: boolean
+        description: Signifies that the section should initially be displayed in a collapsed state
+
+  Downloads:
+    type: object
+    properties:
+      pdftables:
+        $ref: '#/definitions/Download'
+      pdf:
+        $ref: '#/definitions/Download'
+
+  Download:
+    type: object
+    properties:
+      href:
+        type: string
+        format: uri
+      size:
+        type: integer
 
   FigureSection:
     type: object
@@ -392,7 +414,7 @@ definitions:
         description: Version
         example: "2"
 
-  BulletinLink:
+  RelatedLink:
     type: object
     properties:
       index:
