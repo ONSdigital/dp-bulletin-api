@@ -373,9 +373,9 @@ definitions:
         type: string
         description: Markdown formatted content for the section
         example: "Some _content_ in [Markdown](https://en.wikipedia.org/wiki/Markdown)"
-      collapse:
+      collapsible:
         type: boolean
-        description: Signifies that the section should initially be displayed in a collapsed state
+        description: Signifies that the section is collapsible
 
   Downloads:
     type: object
