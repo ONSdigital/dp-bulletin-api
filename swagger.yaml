@@ -38,6 +38,7 @@ paths:
       summary: Get a bulletin
       parameters:
         - $ref: '#/parameters/id'
+        - $ref: '#/parameters/lang'
       produces:
         - application/json
       responses:
@@ -109,6 +110,7 @@ paths:
         - $ref: '#/parameters/id'
         - $ref: '#/parameters/edition'
         - $ref: '#/parameters/version'
+        - $ref: '#/parameters/lang'
       produces:
         - application/json
       responses:
@@ -136,6 +138,13 @@ parameters:
     type: string
     in: path
     required: true
+  lang:
+    name: lang
+    description: Language in which to return the bulletin
+    type: string
+    in: query
+    required: false
+
   limit:
     name: limit
     description: The number of items requested, defaulted to 50 and limited to 1000.
@@ -155,6 +164,12 @@ definitions:
     properties:
       count:
         $ref: '#/definitions/itemCount'
+      limit:
+        $ref: '#/definitions/limit'
+      offset:
+        $ref: '#/definitions/offset'
+      total_count:
+        $ref: '#/definitions/totalCount'
       items:
         type: array
         items:
@@ -177,34 +192,32 @@ definitions:
         items:
           type: string
         example: [ "work" , "jobless" ]
+      language:
+        $ref: '#/definitions/language'
       license:
         description: "The standard Government license right text for the bulletin"
         type: string
+      methodologies:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedLink'
       national_statistic:
         $ref: '#/definitions/nationalStatistic'
       next_release:
         $ref: '#/definitions/nextRelease'
+      related_datasets:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedLink'
       related_links:
         type: array
         items:
           $ref: '#/definitions/RelatedLink'
-      related_data:
+      related_publications:
         type: array
         items:
           $ref: '#/definitions/RelatedLink'
-      related_documents:
-        type: array
-        items:
-          $ref: '#/definitions/RelatedLink'
-      related_methodologies:
-        type: array
-        items:
-          $ref: '#/definitions/RelatedLink'
-      related_methodology_articles:
-        type: array
-        items:
-          $ref: '#/definitions/RelatedLink'
-      related_topics:
+      themes:
         type: array
         items:
           $ref: '#/definitions/RelatedLink'
@@ -219,8 +232,6 @@ definitions:
             $ref: '#/definitions/Link'
           latest_edition:
             $ref: '#/definitions/Link'
-          versions:
-            $ref: '#/definitions/Link'
           latest_version:
             $ref: '#/definitions/Link'
 
@@ -231,6 +242,12 @@ definitions:
         $ref: '#/definitions/id'
       count:
         $ref: '#/definitions/itemCount'
+      limit:
+        $ref: '#/definitions/limit'
+      offset:
+        $ref: '#/definitions/offset'
+      total_count:
+        $ref: '#/definitions/totalCount'
       items:
         type: array
         items:
@@ -265,6 +282,12 @@ definitions:
         $ref: '#/definitions/edition'
       count:
         $ref: '#/definitions/itemCount'
+      limit:
+        $ref: '#/definitions/limit'
+      offset:
+        $ref: '#/definitions/offset'
+      total_count:
+        $ref: '#/definitions/totalCount'
       items:
         type: array
         items:
@@ -287,9 +310,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/FigureSection'
-      correction_notice:
-        type: string
-        example: "A correction has been ma…gise for any inconvenience."
       downloads:
         $ref: '#/definitions/Downloads'
       equations:
@@ -307,23 +327,20 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/FigureSection'
-      meta_description:
+      language:
+        $ref: '#/definitions/language'
+      release_date:
         type: string
-        example: "Estimates of employment… statistics for the UK."
+        format: 'date-time'
+        example: "2019-11-12T15:53:59.810Z"
       sections:
         type: array
         items:
           $ref: '#/definitions/ContentSection'
-      summary:
-        $ref: '#/definitions/summary'
       tables:
         type: array
         items:
           $ref: '#/definitions/FigureSection'
-      update_date:
-        type: string
-        format: 'date-time'
-        example: "2019-11-12T15:53:59.810Z"
       links:
         type: object
         properties:
@@ -343,10 +360,11 @@ definitions:
         example: "2019-09-29T23:00:00.000Z"
       description:
         type: string
-        description: Markdown formatted description of the alert
+        description: Markdown formatted description of the alert / correction notice
         example: "The Business investment by industry and ...for the inconvenience"
       type:
         type: string
+        description: Signifies the type of alert / correction notice
         example: "alert"
 
   Contact:
@@ -417,12 +435,17 @@ definitions:
   RelatedLink:
     type: object
     properties:
-      index:
-        type: integer
+      description:
+        description: "The description of the linked resource"
+        type: string
+      href:
+        description: "The url of the linked resource"
+        type: string
       title:
+        description: "The title of the linked resource"
         type: string
-      uri:
-        type: string
+    required:
+      - href
 
   Link:
     type: object
@@ -451,7 +474,24 @@ definitions:
     type: integer
     description: count of items returned in list
     example: 25
+  limit:
+    description: The number of items requested.
+    type: integer
+    example: 50
+  offset:
+    description: The first row of resources requested.
+    type: integer
+    example: 0
+  totalCount:
+    description: Total number of items
+    type: integer
+    example: 100
 
+
+  language:
+    type: string
+    description: Indicates the language of the text in this bulletin.
+    example: "en"
   nationalStatistic:
     type: boolean
     description: Indicates that this bulletin refers to a National Statistic. These are certified as compliant with the Code of Practice for Official Statistics.
