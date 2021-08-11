@@ -1,8 +1,9 @@
 package main
 
 import (
+	"context"
 	"github.com/ONSdigital/dp-bulletin-api/service"
-	"github.com/ONSdigital/log.go/log"
+	"github.com/ONSdigital/log.go/v2/log"
 	"github.com/pkg/errors"
 	"os"
 	"os/signal"
@@ -23,7 +24,7 @@ func main() {
 	log.Namespace = serviceName
 
 	if err := run(); err != nil {
-		log.Event(nil, "fatal runtime error", log.Error(err), log.FATAL)
+		log.Fatal(nil, "fatal runtime error", err)
 		os.Exit(1)
 	}
 }
@@ -43,7 +44,7 @@ func run() error {
 	case err := <-svcErrors:
 		return errors.Wrap(err, "service error received")
 	case sig := <-signals:
-		log.Event(nil, "os signal received", log.Data{"signal": sig}, log.INFO)
+		log.Info(context.Background(), "os signal received", log.Data{"signal": sig})
 		svc.Close()
 	}
 	return nil

@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"github.com/ONSdigital/log.go/log"
+	"github.com/ONSdigital/log.go/v2/log"
 	"github.com/gorilla/mux"
 )
 
@@ -22,6 +22,6 @@ func Init(ctx context.Context, r *mux.Router) *API {
 
 func (*API) Close(ctx context.Context) error {
 	// Close any dependencies
-	log.Event(ctx, "graceful shutdown of api complete", log.INFO)
+	log.Info(ctx, "graceful shutdown of api complete")
 	return nil
 }

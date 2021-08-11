@@ -1,0 +1,15 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: golang
+    tag: 1.16
+
+inputs:
+  - name: dp-net
+
+run:
+  path: dp-bulletin-api/ci/scripts/lint.sh
