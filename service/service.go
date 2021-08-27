@@ -2,11 +2,12 @@ package service
 
 import (
 	"context"
+
 	"github.com/ONSdigital/dp-bulletin-api/api"
 	"github.com/ONSdigital/dp-bulletin-api/config"
 	"github.com/ONSdigital/dp-healthcheck/healthcheck"
 	"github.com/ONSdigital/go-ns/server"
-	"github.com/ONSdigital/log.go/log"
+	"github.com/ONSdigital/log.go/v2/log"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 )
@@ -22,13 +23,13 @@ type Service struct {
 // Run the service
 func Run(buildTime, gitCommit, version string, svcErrors chan error) (*Service, error) {
 	ctx := context.Background()
-	log.Event(ctx, "running service", log.INFO)
+	log.Info(ctx, "running service")
 
 	cfg, err := config.Get()
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to retrieve service configuration")
 	}
-	log.Event(ctx, "got service configuration", log.Data{"config": cfg}, log.INFO)
+	log.Info(ctx, "got service configuration", log.Data{"config": cfg})
 
 	r := mux.NewRouter()
 
@@ -70,20 +71,20 @@ func Run(buildTime, gitCommit, version string, svcErrors chan error) (*Service, 
 // Gracefully shutdown the service
 func (svc *Service) Close() {
 	timeout := svc.Config.GracefulShutdownTimeout
-	log.Event(nil, "commencing graceful shutdown", log.Data{"graceful_shutdown_timeout": timeout}, log.INFO)
+	log.Info(context.Background(), "commencing graceful shutdown", log.Data{"graceful_shutdown_timeout": timeout})
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	// stop any incoming requests before closing any outbound connections
 	if err := svc.Server.Shutdown(ctx); err != nil {
-		log.Event(ctx, "failed to shutdown http server", log.Error(err), log.ERROR)
+		log.Error(ctx, "failed to shutdown http server", err)
 	}
 
 	if err := svc.API.Close(ctx); err != nil {
-		log.Event(ctx, "error closing API", log.Error(err), log.ERROR)
+		log.Error(ctx, "error closing API", err)
 	}
 
-	log.Event(nil, "graceful shutdown complete", log.INFO)
+	log.Info(ctx, "graceful shutdown complete")
 }
 
 func registerCheckers(ctx context.Context, hc *healthcheck.HealthCheck) (err error) {
